@@ -1,0 +1,6 @@
+{
+    "type": "commonjs",
+    "dependencies": {
+        "mongodb": "^6.17.0"
+    }
+}
