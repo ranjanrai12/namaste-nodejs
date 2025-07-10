@@ -210,8 +210,7 @@ In the above code whatever code is there in xyz file that is wraps into a functi
 - As we know V8 js engine have single thread(there is only one callstack), and whenever there is asynchronous tasks
   comes V8 handover to libuv with this approach our main thread is not blocking so that we call node is non-blocking I/O.
 - I/O means input output like api call, reading the file requesting the file.
-
-![alt text](<libuv diagram.jpeg>)
+  ![alt text](/assets/season1/libuv-diagram.jpeg)
 
 #### Sync, async, setTimeoutZero
 
@@ -363,11 +362,11 @@ When we give the code AST is built -> ignition interpreter(converts the code in 
 - Also ignition interpreter during interpreted the code it recognizes the code which is mostly reusable and it gives that piece code to `turbofan` compiler and that portion of code is known as `hot code`.
 - Now the `turbofan` compiler converts the code into `machine code`.
 
-![alt text](image-2.png)
+![alt text](/assets/season1/image-2.png)
 
 - ignition interpreter give the reusable code to turbofan compiler and that process is known as `optimization`.
 
-![alt text](image-3.png)
+![alt text](/assets/season1/image-3.png)
 
 Above Process is known as JIT !
 
@@ -519,7 +518,7 @@ console.log(newObj); // Output: { a: 30, b: 20 }
 
 Note: this kind of optimization is handled automatically by V8, and most of the time, developers won't notice it happening.
 
-![alt text](image-4.png)
+![alt text](/assets/season1/image-4.png)
 
 Above architecture taken the reference from V8 engine for other js Engine it can be different, but in nut shell each engine use the same thing like they use interpreter, compiler and so on..
 
@@ -527,7 +526,7 @@ For more details about V8 engine Read this documentation(https://v8.dev/blog).
 
 # Episode-09 | libuv & Event Loop
 
-![alt text](image-5.png)
+![alt text](/assets/season1/image-5.png)
 
 - In the above screenshot, it is describing how the libuv is handling the asynchronous call, as we know js engine is `synchronous` single threaded language it executes the code line by line when it sees any `asynchronous` call then it offloads to the libuv, and it's now libuv works to get the data or read the file from OS and so on and once callstack is empty then pass the callback function into the `callstack`.
 
@@ -535,7 +534,7 @@ For more details about V8 engine Read this documentation(https://v8.dev/blog).
 
 #### Event-loop: To be continue
 
-![alt text](image-6.png)
+![alt text](/assets/season1/image-6.png)
 
 There are multiple phases inside the event loop but there are 4 major phases.
 
@@ -548,7 +547,7 @@ All the above operation will wait inside the `callback queue` and `Event loop` k
 
 `NOTE`: If we see inside the above diagram there is another inner cycle marked with blue and that cycle runs before each of the outer four steps, it's a kind of priority cycle which should be run before every phase os event loop.
 
-![alt text](image-7.png)
+![alt text](/assets/season1/image-7.png)
 
 `Example 1: `
 
@@ -565,7 +564,7 @@ http.get("url", cb);
 
 `Example 2:`
 
-![alt text](image-8.png)
+![alt text](/assets/season1/image-8.png)
 
 ```js
 setImmediate(() => console.log("setImmediate"));
@@ -706,10 +705,10 @@ One cycle of the event loop is known as `tick`
 
 #### `Home work 2` Read the event loop from libuv documentation as well.
 
-![alt text](image-9.png)
+![alt text](/assets/season1/image-9.png)
 
 Event loop code:
-![alt text](image-10.png)
+![alt text](/assets/season1/image-10.png)
 
 - What is `thread`:
 - In uv_thread_pool_size by default there are four threads .
@@ -718,7 +717,7 @@ Event loop code:
 
 Ans: `fs`, `dns.lookup`, `crypto`, `crypto.pbkdf2`, `user specified input`
 
-![alt text](image-11.png)
+![alt text](/assets/season1/image-11.png)
 
 #### Is nodejs is a single thread or multi threaded ??
 
@@ -893,7 +892,7 @@ Ans: A `server` can mean two things:
 
 ## How Clients and Servers Communicate?
 
-![alt text](image-12.png)
+![alt text](/assets/season1/image-12.png)
 
 `Step-by-Step Flow`:
 
@@ -919,7 +918,7 @@ Ans: A `server` can mean two things:
 
 ## Why Data is Sent in "Packets"?
 
-![alt text](image-13.png)
+![alt text](/assets/season1/image-13.png)
 
 - Large files (like videos) are split into small pieces (packets).
 
@@ -950,8 +949,8 @@ Analogy: A bucket catching water from the pipe (stream).
 
 ## Domain Names vs. IPs
 
-![alt text](image-17.png)
-![alt text](image-16.png)
+![alt text](/assets/season1/image-17.png)
+![alt text](/assets/season1/image-16.png)
 
 ### DNS Servers: The Internet’s Phonebook
 
@@ -965,7 +964,7 @@ Analogy: A bucket catching water from the pipe (stream).
 
 ## Multiple Servers on One Machine
 
-![alt text](image-15.png)
+![alt text](/assets/season1/image-15.png)
 
 `Ports`: Application Door Numbers.
 
@@ -1002,7 +1001,7 @@ http
 
 ## Real-World Server Architecture
 
-![alt text](image-14.png)
+![alt text](/assets/season1/image-14.png)
 
 ## How Web Servers Work ?
 
@@ -1086,7 +1085,7 @@ A database is an `organized (or structured)` collection of data.
 
 There are multiple types of databases, each serving different use cases.
 
-![alt text](image-18.png)
+![alt text](/assets/season1/image-18.png)
 
 `Relational Databases (SQL Databases)`
 
@@ -1186,7 +1185,7 @@ Additionally, some databases are `multi-model`, meaning they combine multiple No
 
 ## How Data is Stored?
 
-![alt text](image-19.png)
+![alt text](/assets/season1/image-19.png)
 
 `RDBMS` Example (MySQL):
 
@@ -1500,7 +1499,9 @@ main()
   .catch(console.error)
   .finally(() => client.close());
 ```
+
 ### `Cursor` vs `Array`
+
 - `find()` returns a cursor (not documents directly)
 - Convert to `array` with `.toArray()`
 - Cursors enable method chaining and efficient memory usage
@@ -1515,4 +1516,3 @@ const documents = await cursor.toArray();
 // Method chaining example
 const count = await collection.find({ city: "Mumbai" }).count();
 ```
-

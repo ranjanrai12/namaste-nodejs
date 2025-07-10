@@ -20,7 +20,7 @@ Created by DevOps pioneers `John Willis` and `Damon Edwards`, the CAMS model rep
 
 # DevOps principles: The three ways
 
-![alt text](image-1.png)
+![alt text](/assets/devops/image-1.png)
 
 The `Three Ways` is a foundational DevOps framework introduced by `Gene Kim` (author of The Phoenix Project) and `Mike Orzen` (author of Lean IT). These principles guide organizations in adopting DevOps by emphasizing:
 
