@@ -1,0 +1,14 @@
+{
+  "name": "devtinder-app",
+  "version": "1.0.0",
+  "description": "devtinder application for developer communication",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ranjan Rai",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
