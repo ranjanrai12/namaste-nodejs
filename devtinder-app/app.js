@@ -4,15 +4,33 @@ const app = express();
 
 
 
-app.get("/user", (req, res) => {
-  res.send({
-    name: "Ranjan",
-  });
+app.use("/", (error, req, res, next) => {
+//   if (error) {
+//     console.error("An error occurred:", error);
+//     res.status(500).send("Internal Server Error");
+//   } else {
+//     next();
+//   }
+res.send("This is a middleware function that handles errors. If an error occurs, it will be logged and a 500 status will be sent.");
 });
 
-app.get("/ab*c", (req, res) => {
-  res.send("Hello from abc");
+app.get("/user", (req, res) => {
+  // Fetch user from database
+  // For now, we will just send a success message
+
+//   try {
+    // throw new Error("This is an error");
+    res.send("User data fetched successfully");
+//   } catch (error) {
+//     res.status(500).send("An error occurred while fetching user data");
+//   }
 });
+
+app.use("/", (error, req, res, next) => {
+  if (error) {
+    console.error("An error occurred:", error);
+    res.status(500).send("Internal Server Error");
+}});
 
 app.post("/user", (req, res) => {
   // Save user to database
