@@ -1,5 +1,6 @@
+require('dotenv').config();
 const express = require("express");
-
+const mongooseDB = require("./config/database");
 const app = express();
 
 
@@ -43,6 +44,11 @@ app.delete("/user", (req, res) => {
   res.send("User deleted successfully");
 });
 
-app.listen(3000, () => {
-  console.log("Application is running on 3000");
+mongooseDB().then((res) => {
+  console.log("Database connected successfully", res);
+  app.listen(3000, () => {
+    console.log("Application is running on 3000");
+  });
+}).catch((error) => {
+  console.error("Database connection failed:", error);
 });
