@@ -739,3 +739,71 @@ app.use((err, req, res, next) => { ... });
 ```
 
 The first argument (`err`) is special — Express will only call this middleware when there’s an error in the pipeline.
+
+# Episode-06 | Database, Schema & Models | Mongoose
+
+## Connecting Application to MongoDB
+
+### Prerequisites
+
+- Create a `free` MongoDB cluster.
+- Install `Mongoose` library in the application.
+- Install `dotenv`.
+
+```bash
+npm install mongoose
+
+npm install dotenv
+```
+
+### Steps to Connect
+
+**Create Database Configuration**
+
+- Create a `config` folder in `src` directory.
+- Add a `database.js` file inside it.
+- Create a `.env` file at root level and make declare in `.gitignore`.
+- `.env` file will contain mongoDB connection url.
+
+```js
+// config/database.js
+const mongoose = require("mongoose");
+
+const connectMongooseDB = async () => {
+  await mongoose.connect(process.env.MONGODB_URI);
+};
+
+module.exports = connectMongooseDB;
+```
+
+### Modify app.js
+
+```js
+// app.js
+require("dotenv").config();
+const mongooseDB = require("./config/database");
+
+mongooseDB()
+  .then((res) => {
+    console.log("Database connected successfully", res);
+    app.listen(3000, () => {
+      console.log("Application is running on 3000");
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection failed:", error);
+  });
+```
+
+## Important Notes
+
+### Connection String
+
+- Get connection string from MongoDB Atlas dashboard.
+- Format: `mongodb+srv://<username>:<password>@cluster-name.mongodb.net/devTinder`
+- The `/devTinder` at the end specifies the database name.
+
+### Best Practices
+
+- Always connect to database before starting your server.
+- Store sensitive information (username/password) in environment variables.
