@@ -4,14 +4,11 @@ const mongooseDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
 
+app.use(express.json()); // Middleware to parse JSON request bodies
+
 app.post("/signup", async (req, res) => {
-  console.log("Request received to create user");
-  const user = new User({
-    name: "Ranjan",
-    age: 30,
-    lastName: "Rai",
-    email: "ranjan@gmail.com",
-  });
+
+    const user = new User(req.body);
   try {
     await user.save();
     res.send("User created successfully");

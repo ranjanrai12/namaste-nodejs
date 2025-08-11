@@ -931,5 +931,67 @@ app.post("/signup", async (req, res) => {
 
 - **Best Practices:**
   - Always wrap database operations in `try-catch` blocks.
-  - Never manually set `_id` values - let MongoDB handle it
-  - Use proper status codes in responses
+  - Never manually set `_id` values - let MongoDB handle it.
+  - Use proper status codes in responses.
+
+# Episode-07 | Diving into the APIs
+
+## Dynamic User Signup API
+
+### Middleware Setup
+
+- Add `express.json()` middleware to parse incoming JSON requests.
+- Essential for reading request bodies
+
+### Implementation Steps
+
+**Add JSON Middleware `(src/app.js)`:**
+
+```js
+const express = require("express");
+const app = express();
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+```
+
+**Updated Signup API:**
+
+```js
+app.post("/signup", async (req, res) => {
+  try {
+    // Create user from request body
+    const user = new User(req.body);
+
+    // Save to database
+    await user.save();
+
+    res.send("User added successfully");
+  } catch (error) {
+    res.status(400).send("Error saving the user");
+  }
+});
+```
+
+### Key Concepts
+
+**Request Body Parsing:**
+
+- `express.json()` middleware converts `JSON` payload to JavaScript object.
+- Makes data available at `req.body`.
+
+**Dynamic Data Handling:**
+
+- `req.body` contains the user data sent from client.
+- Directly used to create new User instance.
+
+## Comparison: JSON vs JavaScript Object
+
+| **Aspect**        | **JSON**                                                              | **JavaScript Object**                                      |
+| ----------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Definition**    | Text-based format for data exchange.                                  | In-memory data structure in JavaScript.                    |
+| **Syntax**        | Strict syntax: keys and strings must use double quotes.               | Flexible syntax: keys can be unquoted; methods allowed.    |
+| **Data Types**    | Supports limited types: string, number, boolean, null, array, object. | Supports all JavaScript data types, including `undefined`. |
+| **Functionality** | No methods or executable code.                                        | Can include methods and execute logic.                     |
+| **Purpose**       | Used for transferring data between systems.                           | Used for in-program data manipulation.                     |
+| **Conversion**    | Requires parsing to convert to JavaScript Object.                     | Can be directly used in JavaScript programs.               |
