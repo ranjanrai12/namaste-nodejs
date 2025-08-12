@@ -995,3 +995,77 @@ app.post("/signup", async (req, res) => {
 | **Functionality** | No methods or executable code.                                        | Can include methods and execute logic.                     |
 | **Purpose**       | Used for transferring data between systems.                           | Used for in-program data manipulation.                     |
 | **Conversion**    | Requires parsing to convert to JavaScript Object.                     | Can be directly used in JavaScript programs.               |
+
+## Creating APIs to Fetch User Data
+
+### Get User by Email
+
+- Retrieves a single user matching the provided email.
+- Returns `404` if user not found
+
+```js
+app.get("/user", async (req, res) => {
+  //   try {
+  // find will return an array of documents
+  //     const user = await User.find({ email: req.body.email });
+  //     if (user.length === 0) {
+  //       res.status(404).send("User not found");
+  //     } else {
+  //       res.send(user);
+  //     }
+  //   } catch (err) {
+  //     res.status(500).send("Error fetching users: " + err.message);
+  //   }
+  try {
+    // findOne will return a single document or null
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    res.send(user);
+  } catch (err) {
+    res.status(500).send("Error fetching user: " + err.message);
+  }
+});
+```
+
+**key points**
+
+- Uses `findOne()` which returns a single document.
+- Uses `find()` which returns a single document in array.
+- Returns 404 for non-existent users.
+- Always wrap in try-catch for error handling
+
+### Feed API (Get All Users)
+
+- Retrieves all users from the database
+- Returns 404 if user not found
+
+```js
+app.get("/feed", async (req, res) => {
+  try {
+    const allUsers = await User.find({});
+    if (allUsers.length === 0) {
+      res.status(404).send("No users found");
+    } else {
+      res.send(allUsers);
+    }
+  } catch (error) {
+    res.status(500).send("Error fetching feed: " + error.message);
+  }
+});
+```
+
+**key points**
+
+- Uses `find({})` with empty filter to get all documents
+- Returns array of user objects.
+
+### Key Differences: find() vs findOne()
+
+| **Aspect**       | **find()**                | **findOne()**           |
+| ---------------- | ------------------------- | ----------------------- |
+| **Returns**      | Array of documents.       | Single document.        |
+| **Empty result** | Empty array.              | null.                   |
+| **Performance**  | Slower for many docs.     | Faster for one doc.     |
+| **Use case**     | When needing all matches. | When needing one match. |
