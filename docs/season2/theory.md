@@ -1069,3 +1069,62 @@ app.get("/feed", async (req, res) => {
 | **Empty result** | Empty array.              | null.                   |
 | **Performance**  | Slower for many docs.     | Faster for one doc.     |
 | **Use case**     | When needing all matches. | When needing one match. |
+
+## Update & Delete APIs
+
+### Delete User API
+
+- Deletes a user by their MongoDB.
+- Returns success message or error.
+
+```js
+app.delete("/user/delete", async (req, res) => {
+  try {
+    const userId = req.body.id;
+    console.log("User ID to delete:", userId);
+    // Using findByIdAndDelete to delete the user by ID
+    // const deletedUser = await User.findByIdAndDelete(userId);
+    // under the hood, userId is converted to { _id: userId }
+    const deletedUser = await User.findOneAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).send("User not found");
+    }
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(500).send("Error deleting user by ID:" + err.message);
+  }
+});
+```
+
+**Note:** `findByIdAndDelete(id)` is a shorthand for `findOneAndDelete({ _id: id })`
+
+### Update User API
+
+```js
+app.patch("/user/update/:id", async (req, res) => {
+  try {
+    // Using findByIdAndUpdate to update the user by ID
+    // const userId = req.params.id;
+    // const updatedUser = await User.findByIdAndUpdate(userId, req.body);
+
+    const userEmail = req.body.email;
+    // new option ensures that the updated document is returned
+    const updatedUser = await User.findOneAndUpdate(
+      { email: userEmail },
+      req.body,
+      { returnDocument: "after" }
+    );
+    console.log("Updated User:", updatedUser);
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
+    }
+    res.send("User updated successfully");
+  } catch (err) {
+    res.status(500).send("Error updating user: " + err.message);
+  }
+});
+```
+
+**Note:** `[options.returnDocument='before']` Has two possible values, 'before' and 'after'. By default, it will return the document before the update was applied.
+
+**[Study all model methods in Mongoose docs](https://mongoosejs.com/docs/api/model.html)**

@@ -70,6 +70,7 @@ app.delete("/user/delete", async (req, res) => {
     const userId = req.body.id;
     console.log("User ID to delete:", userId);
     // Using findByIdAndDelete to delete the user by ID
+    // Under the hood, userId is converted to { _id: userId }
     const deletedUser = await User.findOneAndDelete(userId);
     if (!deletedUser) {
       return res.status(404).send("User not found");
@@ -88,8 +89,7 @@ app.patch("/user/update/:id", async (req, res) => {
         
         const userEmail = req.body.email;
         // new option ensures that the updated document is returned
-        // If we want to return the original document before the update, set new: false
-        const updatedUser = await User.findOneAndUpdate({email: userEmail}, req.body);
+        const updatedUser = await User.findOneAndUpdate({email: userEmail}, req.body, {returnDocument: "after"});
         console.log("Updated User:", updatedUser);
         if (!updatedUser) {
             return res.status(404).send("User not found");
