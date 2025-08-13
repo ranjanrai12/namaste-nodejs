@@ -65,6 +65,41 @@ app.get("/feed", async (req, res) => {
   }
 });
 
+app.delete("/user/delete", async (req, res) => {
+  try {
+    const userId = req.body.id;
+    console.log("User ID to delete:", userId);
+    // Using findByIdAndDelete to delete the user by ID
+    const deletedUser = await User.findOneAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).send("User not found");
+    }
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(500).send("Error deleting user by ID:" + err.message);
+  }
+});
+
+app.patch("/user/update/:id", async (req, res) => {
+    try {
+        // Using findByIdAndUpdate to update the user by ID
+        // const userId = req.params.id;
+        // const updatedUser = await User.findByIdAndUpdate(userId, req.body);
+        
+        const userEmail = req.body.email;
+        // new option ensures that the updated document is returned
+        // If we want to return the original document before the update, set new: false
+        const updatedUser = await User.findOneAndUpdate({email: userEmail}, req.body);
+        console.log("Updated User:", updatedUser);
+        if (!updatedUser) {
+            return res.status(404).send("User not found");
+        }
+        res.send("User updated successfully");
+    } catch(err) {
+        res.status(500).send("Error updating user: " + err.message);
+    }
+})
+
 mongooseDB()
   .then((res) => {
     console.log("Database connected successfully");
