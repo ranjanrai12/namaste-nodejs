@@ -82,23 +82,26 @@ app.delete("/user/delete", async (req, res) => {
 });
 
 app.patch("/user/update/:id", async (req, res) => {
-    try {
-        // Using findByIdAndUpdate to update the user by ID
-        // const userId = req.params.id;
-        // const updatedUser = await User.findByIdAndUpdate(userId, req.body);
-        
-        const userEmail = req.body.email;
-        // new option ensures that the updated document is returned
-        const updatedUser = await User.findOneAndUpdate({email: userEmail}, req.body, {returnDocument: "after"});
-        console.log("Updated User:", updatedUser);
-        if (!updatedUser) {
-            return res.status(404).send("User not found");
-        }
-        res.send("User updated successfully");
-    } catch(err) {
-        res.status(500).send("Error updating user: " + err.message);
+  try {
+    // Using findByIdAndUpdate to update the user by ID
+    const userId = req.params.id;
+    // runValidators: true ensures that the update respects the schema validation rules
+    const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
+      runValidators: true,
+    });
+
+    // const userEmail = req.body.email;
+    // new option ensures that the updated document is returned
+    // const updatedUser = await User.findOneAndUpdate({email: userEmail}, req.body, {returnDocument: "after"});
+    // console.log("Updated User:", updatedUser);
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
     }
-})
+    res.send("User updated successfully");
+  } catch (err) {
+    res.status(500).send("Error updating user: " + err.message);
+  }
+});
 
 mongooseDB()
   .then((res) => {
