@@ -1125,6 +1125,126 @@ app.patch("/user/update/:id", async (req, res) => {
 });
 ```
 
-**Note:** `[options.returnDocument='before']` Has two possible values, 'before' and 'after'. By default, it will return the document before the update was applied.
+**Note:** `[options.returnDocument='before']` Has two possible values, `before` and `after`.
 
-**[Study all model methods in Mongoose docs](https://mongoosejs.com/docs/api/model.html)**
+- **before** (default): Returns the document before the update.
+- **after**: Returns the updated document.
+
+**key points**
+
+- [Study all model methods in Mongoose docs](https://mongoosejs.com/docs/api/model.html)
+- Any fields not in the Mongoose Schema will be ignored during update.
+
+# Episode-08 | Data Sanitization & Schema Validations
+
+## Adding Validations in Mongoose Schema
+
+### Required Fields
+
+If a required field is missing, Mongoose will reject the insert and return a validation error.
+
+```js
+const userSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+});
+```
+
+### Unique Fields
+
+This will trigger a duplicate key error if an insert attempts to reuse an existing value.
+
+```js
+email: { type: String, required: true, unique: true }
+```
+
+### Lowercase & Trim
+
+```js
+email: {
+  type: String,
+  required: true,
+  unique: true,
+  lowercase: true,  // store in lowercase
+  trim: true        // remove extra spaces
+}
+
+```
+
+Prevents issues where " user@example.com " and "user@example.com" would be treated differently.
+
+### Length Validations
+
+**For strings:**
+
+```js
+firstName: { type: String, minlength: 4, maxlength: 50 }
+```
+
+**For numbers:**
+
+```js
+age: { type: Number, min: 18, max: 100 }
+
+```
+
+### Default Values
+
+If a field is not provided, Mongoose can assign a default value:
+
+```js
+about: { type: String, default: "This is a default description." },
+photoUrl: {
+  type: String,
+  default: "https://example.com/default-profile.jpg"
+}
+
+```
+
+### Arrays
+
+For storing multiple values, This creates an empty array by default if no skills are provided.
+
+```js
+skills: { type: [String], default: [] }
+
+```
+
+### Custom Validators
+
+```js
+gender: {
+  type: String,
+  validate: {
+    validator: function(value) {
+      return ["male", "female", "others"].includes(value);
+    },
+    message: "Gender is not valid"
+  }
+}
+
+```
+
+### Running Validators on Update
+
+By default, validators run **only on document creation**. When updating with findByIdAndUpdate or similar enable with `runValidators`.
+
+```js
+User.findByIdAndUpdate(id, updateData, { runValidators: true });
+```
+
+### Adding Automatic Timestamps
+
+- **createdAt** — when the document was first created.
+
+- **updatedAt** — when the document was last modified.
+
+```js
+const userSchema = new mongoose.Schema(
+  {
+    // fields...
+  },
+  { timestamps: true }
+);
+```

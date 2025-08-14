@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema(
         validator: function (v) {
           return v >= 18 && v <= 100;
         },
-        message: (props) => `${props.value} is not a valid age! Age must be between 18 and 100.`,
+        message: (props) =>
+          `${props.value} is not a valid age! Age must be between 18 and 100.`,
       },
     },
     email: {
@@ -40,7 +41,12 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ["Male", "Female", "Other"],
+      validate: {
+        validator: (v) => {
+          ["male", "female", "other"].includes(v.toLowerCase());
+        },
+        message: (props) => `${props.value} Gender is not valid`,
+      },
     },
     skills: {
       type: [String],
