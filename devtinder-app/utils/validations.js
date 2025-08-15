@@ -1,0 +1,37 @@
+const validator = require("validator");
+
+const validateSignUpData = (req) => {
+  const { firstName, lastName, email, password } = req.body;
+  if (!firstName || firstName.length < 3 || firstName.length > 50) {
+    throw new Error("First name must be between 3 and 50 characters long.");
+  }
+  if (!lastName || lastName.length < 3 || lastName.length > 10) {
+    throw new Error("Last name must be between 3 and 10 characters long.");
+  }
+  if (!validator.isEmail(email)) {
+    throw new Error("Invalid email format.");
+  }
+  if (!validator.isStrongPassword(password)) {
+    throw new Error(
+      "Password must be at least 6 characters long and contain a mix of letters, numbers, and symbols."
+    );
+  }
+};
+
+const validateLoginData = (req) => {
+  const { email, password } = req.body;
+  if(!email) {
+    throw new Error("Email is required.");
+  }
+  if (!validator.isEmail(email)) {
+    throw new Error("Invalid email format.");
+  }
+  if (!password) {
+    throw new Error("Password is required.");
+  }
+};
+
+module.exports = {
+  validateSignUpData,
+  validateLoginData,
+};
