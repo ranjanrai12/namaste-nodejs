@@ -1249,9 +1249,123 @@ const userSchema = new mongoose.Schema(
 );
 ```
 
-
-
 **Key Points**
 
 [For More Details of Schema type please refer mongoose documentation.](https://mongoosejs.com/docs/schematypes.html)
 
+## API-Level Validation Is Necessary
+
+Even if you have UI validations, attackers can:
+
+- Send direct API calls via tools like Postman.
+- Inject unwanted or malicious data into your database.
+- Overwrite sensitive fields like email, userId, etc.
+
+### Example Risks:
+
+- Changing email after signup (identity spoofing)
+- Adding extremely large arrays.
+- Inserting invalid URLs, numbers, or formats.
+
+### Rule
+
+**Never trust `req.body` directly** — validate and sanitize before storing.
+
+### Example: Restricting Updatable Fields in PATCH API
+
+Allow users to update only certain fields (e.g., `photoURL`, `about`, `gender`, `age`, `skills`)
+
+```js
+const allowedUpdates = ["photoURL", "about", "gender", "age", "skills"];
+
+const isUpdateAllowed = (data) => {
+  return Object.keys(data).every((key) => allowedUpdates.includes(key));
+};
+
+app.patch("/users/:userId", async (req, res) => {
+  try {
+    if (!isUpdateAllowed(req.body)) {
+      throw new Error("Update not allowed");
+    }
+
+    // Example extra validation for skills length
+    if (req.body.skills && req.body.skills.length > 10) {
+      throw new Error("Skills cannot be more than 10");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      req.body,
+      { new: true }
+    );
+
+    res.status(200).send({ message: "User updated successfully", updatedUser });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+```
+
+### Schema-Level Validation with `validator` Library.
+
+**Install**
+
+```bash
+npm install validator
+```
+
+```js
+const validator = require("validator");
+
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Invalid email address");
+      }
+    },
+  },
+  photoURL: {
+    type: String,
+    validate(value) {
+      if (!validator.isURL(value)) {
+        throw new Error("Invalid photo URL");
+      }
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    validate(value) {
+      if (!validator.isStrongPassword(value)) {
+        throw new Error("Enter a strong password");
+      }
+    },
+  },
+});
+```
+
+### Using the validator Library
+
+**Few Example of validator library Functions**
+
+- `validator.isEmail(value)` → checks for valid email format
+
+- `validator.isURL(value)` → checks for valid URL
+
+- `validator.isStrongPassword(value, options)` → checks for password strength
+
+- `validator.isMobilePhone(value, locale)` → checks for valid phone number
+
+- `validator.isNumeric(value)` → checks for numeric strings
+
+```js
+if (!validator.isStrongPassword(password)) {
+  throw new Error(
+    "Password must have at least 8 chars, 1 uppercase, 1 lowercase, 1 number, and 1 symbol"
+  );
+}
+```

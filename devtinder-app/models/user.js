@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -30,9 +31,17 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      //   validate: function(val) {
+      //     if(!validator.isEmail(val)) {
+      //         throw new Error("Invalid email format");
+      //     }
+      //   }
       validate: {
         validator: function (v) {
-          return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
+          //return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
+          if (!validator.isEmail(v)) {
+            throw new Error("Invalid email format");
+          }
         },
         message: (props) => `${props.value} is not a valid email address!`,
       },
@@ -45,7 +54,7 @@ const userSchema = new mongoose.Schema(
           return v.length >= 6;
         },
         message: (props) => `Password must be at least 6 characters long!`,
-      }
+      },
     },
     gender: {
       type: String,
