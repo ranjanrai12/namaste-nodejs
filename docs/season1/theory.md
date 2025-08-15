@@ -12,7 +12,7 @@ Nodejs has an `event-driven` architecture and capable of `asynchronous I/O` aka 
 - After 2 days he skipped `spider monkey` and started on top of `V8(Chrome's js engine)`.
 - `Joyent` organization `hired Ryan` because they were also working on the same concept within there organization which js can run on server, so it's a big contribution of `Joyent` to sustain `nodejs`.
 - Earlier name of `node.js` was `web.js`.
-- Why Ryan was trying to develope nodejs, the reason behind is he wants to develop non-blocking I/O server.
+- Why Ryan was trying to develop nodejs, the reason behind is he wants to develop non-blocking I/O server.
 - In 2010 NPM came into picture, so basically it's a central place where we can add new package.
 - In `2011` `windows support` came where `joyent + MicroSoft` bring it, before that it was only available for mac and linux.
 - In `2012`, `Ryan` left the leadership of nodejs and all responsibility was given to `issac` who is th `creator of npm` and he was the lead of nodejs from `2012`.
