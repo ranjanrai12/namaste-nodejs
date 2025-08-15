@@ -1249,6 +1249,9 @@ const userSchema = new mongoose.Schema(
 );
 ```
 
+
+
 **Key Points**
 
 [For More Details of Schema type please refer mongoose documentation.](https://mongoosejs.com/docs/schematypes.html)
+
