@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       required: true,
       minlength: 3,
@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema(
     lastName: {
       type: String,
       required: true,
+      minlength: 3,
+      maxlength: 10,
     },
     age: {
       type: Number,
@@ -38,6 +40,12 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          return v.length >= 6;
+        },
+        message: (props) => `Password must be at least 6 characters long!`,
+      }
     },
     gender: {
       type: String,
@@ -54,6 +62,7 @@ const userSchema = new mongoose.Schema(
     country: {
       type: String,
       default: "India",
+      maxlength: 50,
       // default: () => "India"
     },
   },

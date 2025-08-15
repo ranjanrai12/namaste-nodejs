@@ -85,6 +85,15 @@ app.patch("/user/update/:id", async (req, res) => {
   try {
     // Using findByIdAndUpdate to update the user by ID
     const userId = req.params.id;
+    const allowUpdateFields = ["firstName", "lastName", "skills", "country", "gender"];
+    const updateFieldsBody = Object.keys(req.body);
+    const isValidateUpdate = updateFieldsBody.every((field) => allowUpdateFields.includes(field));
+    if(!isValidateUpdate) {
+        return res.status(400).send("Invalid updates field")
+    }
+    if(req.body.skills.length > 30) {
+        return res.status(400).send("Skills should not be more than 30")
+    }
     // runValidators: true ensures that the update respects the schema validation rules
     const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
       runValidators: true,
