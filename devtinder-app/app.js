@@ -3,10 +3,16 @@ const express = require("express");
 const mongooseDB = require("./config/database");
 const User = require("./models/user");
 const app = express();
-const { validateSignUpData, validateLoginData } = require("./utils/validations");
+const {
+  validateSignUpData,
+  validateLoginData,
+} = require("./utils/validations");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(cookieParser()); // Middleware to parse cookies
 
 app.post("/signup", async (req, res) => {
   try {
@@ -41,9 +47,36 @@ app.get("/login", async (req, res) => {
     if (!isPasswordMatch) {
       throw new Error("Invalid email or password");
     }
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY);
+    console.log("Generated Token:", token);
+    res.cookie("token", token);
     res.send("Login successful");
   } catch (err) {
     res.status(500).send("Error logging in: " + err.message);
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const { token } = req.cookies;
+
+    if (!token) {
+      return res.status(401).send("Access denied. No token provided.");
+    }
+    // Verify the token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    // decodedToken will contain the user ID and other payload data
+    const { _id } = decodedToken;
+
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    res.send(user);
+  } catch (err) {
+    res.status(500).send("Error fetching profile: " + err.message);
   }
 });
 
