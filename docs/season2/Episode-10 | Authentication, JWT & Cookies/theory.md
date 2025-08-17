@@ -7,9 +7,13 @@ Authentication ensures that only logged-in users can access protected resources 
 ### 1. Signup and Login
 
 - **Signup API**: User registers with email + password. Passwords are hashed and stored securely in the database.
+
 - **Login API:** User provides email + password.
+
   - Server validates credentials.
+
   - If valid → server generates a **JWT (JSON Web Token).**
+
   - Server sends back the JWT inside a **cookie** in the response.
 
 ### 2. How Communication Works
@@ -35,7 +39,7 @@ Because connection is closed after every request, authentication must be validat
 
 - Once the user logs in, the server issues a JWT containing:
 
-  - User ID
+  - User ID // **uniq identifier**
 
   - Expiration time
 
@@ -50,7 +54,7 @@ So, browsers use cookies as an automatic storage and transport mechanism.
 
 - After login:
 
-  - Server sends back the JWT inside a cookie.
+  - Server sends back the `JWT` inside a cookie.
 
   - Browser automatically stores the cookie.
 
@@ -62,11 +66,11 @@ So, browsers use cookies as an automatic storage and transport mechanism.
 
 ### 5. Cookie & JWT Expiry
 
-- Both JWT and cookies can have e**xpiry times.**
+- Both JWT and cookies can have **expiry times.**
 
 - Examples:
 
-  - Cookie valid for **1 hour / 1 day / 1 month / lifetime.**
+  - Cookie valid for e.g **1 hour / 1 day / 1 month / lifetime.**
 
   - Once expired → JWT is invalid → Server rejects the request → User must **login again.**
 
