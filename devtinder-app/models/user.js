@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -79,6 +80,18 @@ const userSchema = new mongoose.Schema(
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
 );
+
+userSchema.methods.getJWT = function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: "1h",
+  });
+  return token;
+};
+
+userSchema.methods.comparePassword = function () {
+  const user = this;
+};
 
 // Mongoose will also automatically pluralized the model name from "User" to "users" for the collection name.
 // If you want to specify a custom collection name, you can pass it as the second argument to mongoose.model.

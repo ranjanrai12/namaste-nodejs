@@ -10,6 +10,7 @@ const {
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(cookieParser()); // Middleware to parse cookies
@@ -47,36 +48,29 @@ app.get("/login", async (req, res) => {
     if (!isPasswordMatch) {
       throw new Error("Invalid email or password");
     }
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY);
-    console.log("Generated Token:", token);
-    res.cookie("token", token);
+    console.log("User found:", user);
+    const token = user.getJWT(user);
+    res.cookie("token", token, { expires: new Date(Date.now() + 3600000) });
     res.send("Login successful");
   } catch (err) {
     res.status(500).send("Error logging in: " + err.message);
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const { token } = req.cookies;
-
-    if (!token) {
-      return res.status(401).send("Access denied. No token provided.");
-    }
-    // Verify the token
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    // decodedToken will contain the user ID and other payload data
-    const { _id } = decodedToken;
-
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    res.send(user);
+    res.send(req.user);
   } catch (err) {
     res.status(500).send("Error fetching profile: " + err.message);
+  }
+});
+
+app.get("/sendConnectionRequest", userAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    res.send(user.firstName + " connection request sent successfully");
+  } catch (err) {
+    res.status(500).send("Error sending connection request: " + err.message);
   }
 });
 
@@ -132,7 +126,6 @@ app.get("/feed", async (req, res) => {
 app.delete("/user/delete", async (req, res) => {
   try {
     const userId = req.body.id;
-    console.log("User ID to delete:", userId);
     // Using findByIdAndDelete to delete the user by ID
     // Under the hood, userId is converted to { _id: userId }
     const deletedUser = await User.findOneAndDelete(userId);
