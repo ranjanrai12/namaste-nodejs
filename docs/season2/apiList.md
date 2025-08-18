@@ -1,35 +1,34 @@
 # DevTinder APIs
 
-## authRouter
+## Authentication Router (/auth)
 
-- /signUp || **POST**
+| Method   | Endpoint  | Purpose                                      |
+| -------- | --------- | -------------------------------------------- |
+| **POST** | `/signup` | Register a new user                          |
+| **POST** | `/login`  | Authenticate user, return JWT token / cookie |
+| **POST** | `/logout` | Logout the user (invalidate token)           |
 
-- /login || **POST**
+## Profile Router (/profile)
 
-- /logout || **POST**
+| Method    | Endpoint    | Purpose                               |
+| --------- | ----------- | ------------------------------------- |
+| **GET**   | `/view`     | View own profile                      |
+| **PATCH** | `/edit`     | Update profile info (except password) |
+| **PATCH** | `/password` | Change password                       |
 
-## profileRouter
+## Connection Router (/request)
 
-- /profile/view || **GET**
+| Method   | Endpoint                     | Purpose                                             |
+| -------- | ---------------------------- | --------------------------------------------------- |
+| **POST** | `/send/:status/:requestId`   | Right-swipe or Left-swipe → show interest / Ignored |
+| **POST** | `/review/:status/:requestId` | Accept or reject a received connection request      |
 
-- /profile/update || **PATCH**
+## User Data Router (/user)
 
-- /profile/changePassword || **PATCH** `Forgot Password`
+| Method  | Endpoint             | Purpose                                                      |
+| ------- | -------------------- | ------------------------------------------------------------ |
+| **GET** | `/feed`              | Fetch batch of profiles (e.g., 20–30 at a time) for swipe UI |
+| **GET** | `/connections`       | List all matched connections (accepted connections)          |
+| **GET** | `/requests/received` | View received connection requests                            |
 
-## connectionRequestRouter
-
-- /request/send/:status/:requestId || **POST**
-
-- /request/review/:status/:requestId || **POST**
-
-## userRouter
-
-- /user/requests/received || **GET**
-
-- /user/connection || **POST**
-
-- /user/feeds || **GET**
-
-
-Status: `ignored`, `interested`, `accepted`, `rejected`
-
+**Status**: `ignored`, `interested`, `accepted`, `rejected`
