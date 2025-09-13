@@ -4,7 +4,10 @@ const User = require("../models/user");
 const express = require("express");
 const authRouter = express.Router();
 
-const { validateSignUpData, validateLoginData } = require("../utils/validations");
+const {
+  validateSignUpData,
+  validateLoginData,
+} = require("../utils/validations");
 
 authRouter.post("/signup", async (req, res) => {
   try {
@@ -41,11 +44,26 @@ authRouter.get("/login", async (req, res) => {
     }
     console.log("User found:", user);
     const token = user.getJWT(user);
-    res.cookie("token", token, { expires: new Date(Date.now() + 3600000) });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      expires: new Date(Date.now() + 3600000),
+    });
     res.send("Login successful");
   } catch (err) {
     res.status(500).send("Error logging in: " + err.message);
   }
+});
+
+authRouter.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    expires: new Date(Date.now()),
+  });
+  res.send("Logout successfully!")
 });
 
 module.exports = authRouter;

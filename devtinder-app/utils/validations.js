@@ -20,7 +20,7 @@ const validateSignUpData = (req) => {
 
 const validateLoginData = (req) => {
   const { email, password } = req.body;
-  if(!email) {
+  if (!email) {
     throw new Error("Email is required.");
   }
   if (!validator.isEmail(email)) {
@@ -31,7 +31,30 @@ const validateLoginData = (req) => {
   }
 };
 
+const validationProfileUpdateData = (req) => {
+  const allowedFieldsToUpdate = [
+    "firstName",
+    "lastName",
+    "age",
+    "gender",
+    "skills",
+    "country",
+  ];
+  const { firstName, skills } = req.body;
+  if (!validator.isLength(firstName, { min: 3 })) {
+    throw new Error("FirstName should be more than or equal to 3 characters");
+  }
+  if (!skills.length > 30) {
+    throw new Error("Skills should not be more than 30");
+  }
+
+  return Object.keys(req.body).every((item) =>
+    allowedFieldsToUpdate.includes(item)
+  );
+};
+
 module.exports = {
   validateSignUpData,
   validateLoginData,
+  validationProfileUpdateData,
 };

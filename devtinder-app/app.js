@@ -13,9 +13,9 @@ const requestRouter = require("./routes/request");
 
 app.use("/auth", authRouter);
 
-app.use("/", profileRouter)
+app.use("/profile", profileRouter);
 
-app.use("/", requestRouter);
+app.use("/request", requestRouter);
 
 mongooseDB()
   .then((res) => {
