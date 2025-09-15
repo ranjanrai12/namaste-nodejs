@@ -68,13 +68,5 @@ profileRouter.patch("/password", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.get("/sendConnectionRequest", userAuth, async (req, res) => {
-  try {
-    const { user } = req;
-    res.send(user.firstName + " connection request sent successfully");
-  } catch (err) {
-    res.status(500).send("Error sending connection request: " + err.message);
-  }
-});
 
 module.exports = profileRouter;

@@ -59,12 +59,16 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      validate: {
-        validator: (v) => {
-          ["male", "female", "other"].includes(v.toLowerCase());
-        },
-        message: (props) => `${props.value} Gender is not valid`,
-      },
+      enum: {
+        values: ["male", "female", "other"],
+        message: '${VALUE} is not a valid Gender'
+      }
+      // validate: {
+      //   validator: (v) => {
+      //     ["male", "female", "other"].includes(v.toLowerCase());
+      //   },
+      //   message: (props) => `${props.value} Gender is not valid`,
+      // },
     },
     skills: {
       type: [String],
