@@ -106,7 +106,13 @@ requestRouter.patch("/user/update/:id", async (req, res) => {
     res.status(500).send("Error updating user: " + err.message);
   }
 });
-
+/**
+ * Send connection request
+ * @route POST /request/send/:status/:toUserId
+ * @access Private
+ * @desc Send connection request
+ * @body { status: "ignored" | "interested" }
+ */
 requestRouter.post("/send/:status/:toUserId", userAuth, async (req, res) => {
   console.log(req);
   try {
@@ -163,6 +169,47 @@ requestRouter.post("/send/:status/:toUserId", userAuth, async (req, res) => {
     res.status(200).json({
       status: `${req.user.firstName} is ${status} in ${toUser.firstName}`,
       data,
+    });
+  } catch (err) {
+    res.status(500).send("Error: " + err.message);
+  }
+});
+
+/**
+ * Review connection request
+ * @route POST /request/review/:status/:requestId
+ * @access Private
+ * @desc Review connection request
+ * @body { status: "accepted" | "rejected" }
+ */
+requestRouter.post("/review/:status/:requestId", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const { status, requestId } = req.params;
+    // allowed only accepted and rejected
+    const allowedStatus = ["accepted", "rejected"];
+    // Check if status is allowed
+    if (!allowedStatus.includes(status)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid status type: " + status });
+    }
+    /**
+     * requestId is The _id of the connection request document
+     */
+    const connectionRequest = await ConnectionRequest.findOne({
+      _id: requestId,
+      toUserId: loggedInUser._id,
+      status: "interested",
+    });
+    if (!connectionRequest) {
+      return res.status(400).json({ message: "No connection request found" });
+    }
+    connectionRequest.status = status;
+    const updatedConnectionRequest = await connectionRequest.save();
+    res.status(200).json({
+      message: "Review done successfully",
+      data: updatedConnectionRequest,
     });
   } catch (err) {
     res.status(500).send("Error: " + err.message);

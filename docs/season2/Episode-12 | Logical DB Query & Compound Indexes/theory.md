@@ -171,3 +171,119 @@ module.exports = requestRouter;
 - **Use Case**: Perfect for data validation and manipulation that should happen automatically whenever a document is saved (e.g., hashing passwords, validating data relationships).
 
 - **Note**: Use regular `function()` instead of `arrow` functions to access the document via this.
+
+# MongoDB Logical Query Operators
+
+## Overview
+
+Logical query allow to combine multiple filter condition to create more complex and powerful query. They are essential for finding documents that matches specific, often non-specific criteria.
+
+## The `$or` Operator
+
+The `$or` operator performs a logical **OR** operation on an array of conditions. It selects documents that satisfy **at least one** of the specified conditions.
+
+```js
+{ $or: [ { <condition1> }, { <condition2> }, ... , { <conditionN> } ] }
+```
+
+**use case:** Finding documents where either condition A is true or condition B is true.
+
+## The $and Operator
+
+The `$and` operator performs a logical **AND** operation on an array of conditions. It selects documents that satisfy **ALL** of the specified conditions.
+
+**Important Note:**
+
+MongoDB provides an **implicit** `and` for conditions in the same object. Using the **explicit** `$and` is necessary **only** when need to use same field multiple times with different conditions, or when using multiple `$or` expressions.
+
+**Example 1: Implicit AND (Most Common)**
+
+**Goal:** Find users named "Akshay" who are also 30 years old. The two conditions are implicitly joined with an AND.
+
+```js
+const users = await User.find({ firstName: "Akshay", age: 30 });
+```
+
+**Example 2: Explicit $and (Necessary Use Case)**
+
+**Goal:** Find users where the age field is greater than 25 **AND** less than 40. We must use `$and` because the same field is used twice.
+
+```js
+const users = await User.find({
+  $and: [{ age: { $gt: 25 } }, { age: { $lt: 40 } }],
+});
+// This can also be written more cleanly with a single object:
+// { age: { $gt: 25, $lt: 40 } }
+```
+
+**Example 3: Combining Multiple $or Clauses**
+
+**Goal:** Find users who are EITHER named "Akshay" OR "Virat" AND who are EITHER 30 OR 35 years old.
+
+```js
+const users = await User.find({
+  $and: [
+    { $or: [{ firstName: "Akshay" }, { firstName: "Virat" }] },
+    { $or: [{ age: 30 }, { age: 35 }] },
+  ],
+});
+```
+
+**Explanation:** This query finds users that match a name (**Akshay OR Virat**) and also match an age (**30 OR 35**). Without the $and, the $or clauses would be merged incorrectly.
+
+## The $nor Operator
+
+The `$nor` operator performs a logical **NOR** operation on an array of conditions. It selects documents that fail **ALL** of the specified conditions. It's the inverse of `$or`.
+
+```js
+{ $nor: [ { <condition1> }, { <condition2> }, ... , { <conditionN> } ] }
+```
+
+**Use Case:**
+Finding documents that are none of the given criteria. Useful for exclusion.
+
+**Goal:** Find all users who are NOT named "Akshay" and are NOT 30 years old.
+
+```js
+const users = await User.find({
+  $nor: [{ firstName: "Akshay" }, { age: 30 }],
+});
+```
+
+## The $not Operator
+
+The `$not` operator performs a logical **NOT** operation on a **single** condition. It selects documents that do **not** match the given expression.
+
+```js
+{ field: { $not: { <operator-expression> } } }
+```
+
+**Use Case:**
+
+Negating a single, often complex, condition.
+
+**Example 1: Negating an Operator**
+
+**Goal:** Find all users where the age is not greater than 30 (i.e., age is <= 30).
+
+```js
+const users = await User.find({ age: { $not: { $gt: 30 } } });
+```
+
+**Example 2: Negating a Regex Pattern (Very Useful)**
+
+**Goal:** Find all users whose email does NOT end with @gmail.com.
+
+```js
+const users = await User.find({
+  email: {
+    $not: /@gmail.com$/i, // 'i' flag for case-insensitive
+  },
+});
+```
+
+## Compound Index
+
+Compound indexes collect and sort data from multiple field values from each document in a collection. 
+
+// TODO: Need to Explore more....

@@ -27,8 +27,8 @@
 
 | Method  | Endpoint             | Purpose                                                      |
 | ------- | -------------------- | ------------------------------------------------------------ |
-| **GET** | `/feed`              | Fetch batch of profiles (e.g., 20–30 at a time) for swipe UI |
-| **GET** | `/connections`       | List all matched connections (accepted connections)          |
 | **GET** | `/requests/received` | View received connection requests                            |
+| **GET** | `/connections`       | List all matched connections (accepted connections)          |
+| **GET** | `/feed`              | Fetch batch of profiles (e.g., 20–30 at a time) for swipe UI |
 
 **Status**: `ignored`, `interested`, `accepted`, `rejected`
