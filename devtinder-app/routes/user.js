@@ -27,10 +27,6 @@ userRouter.get("/request/received", userAuth, async (req, res) => {
       status: "interested",
     }).populate("fromUserId", "firstName lastName country");
 
-    if (!connectionRequests.length) {
-      return res.status(400).json({ message: "No connection request found" });
-    }
-
     res.status(200).json({ data: connectionRequests });
   } catch (err) {
     res.status(500).send("Error fetching user: " + err.message);
