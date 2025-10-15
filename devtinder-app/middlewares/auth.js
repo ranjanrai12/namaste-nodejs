@@ -8,10 +8,34 @@ const userAuth = async (req, res, next) => {
 
     // If token is not present, return 401 Unauthorized
     if (!token) {
-      return res.status(401).send("Access denied. No token provided.");
+      return res
+        .status(401)
+        .json({ errorCode: 401, message: "Access denied. No token provided." });
     }
     // Verify the token
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    } catch (err) {
+      switch (err.name) {
+        case "TokenExpiredError":
+          return res.status(401).json({
+            errorCode: 401,
+            message: "Session expired. Please log in again.",
+          });
+        case "JsonWebTokenError":
+          return res.status(401).json({
+            errorCode: 401,
+            message: "Invalid token. Please log in again.",
+          });
+        default:
+          return res
+            .status(400)
+            .json({ errorCode: 401, message: "Token verification failed." });
+      }
+    }
+
+    // Extract the user ID from the decoded token
     const { _id } = decodedToken;
 
     // Check if user exists in the database

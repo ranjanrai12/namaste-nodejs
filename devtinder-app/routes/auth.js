@@ -29,7 +29,7 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
-authRouter.get("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     validateLoginData(req);
@@ -50,9 +50,17 @@ authRouter.get("/login", async (req, res) => {
       sameSite: "strict",
       expires: new Date(Date.now() + 3600000),
     });
-    res.send("Login successful");
+    const allowedFields = ["_id", "firstName", "lastName", "email", "age"];
+    const filteredUser = {};
+    const userObject = user.toObject();
+    Object.keys(userObject).forEach((key) => {
+      if (allowedFields.includes(key)) {
+        filteredUser[key] = user[key];
+      }
+    });
+    res.json({ data: filteredUser });
   } catch (err) {
-    res.status(500).send("Error logging in: " + err.message);
+    res.status(500).json(err.message);
   }
 });
 
@@ -62,8 +70,9 @@ authRouter.post("/logout", (req, res) => {
     secure: true,
     sameSite: "strict",
     expires: new Date(Date.now()),
+    path: "/",
   });
-  res.send("Logout successfully!")
+  res.send("Logout successfully!");
 });
 
 module.exports = authRouter;
