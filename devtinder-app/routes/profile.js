@@ -4,10 +4,27 @@ const profileRouter = express.Router();
 
 const { userAuth } = require("../middlewares/auth");
 const { validationProfileUpdateData } = require("../utils/validations");
+const allowedFields = [
+  "firstName",
+  "lastName",
+  "photoUrl",
+  "age",
+  "gender",
+  "about",
+  "skills",
+  "email",
+];
 
 profileRouter.get("/view", userAuth, async (req, res) => {
   try {
-    res.send(req.user);
+    const loggedInUser = req.user.toObject();
+    const updatedUserData = {};
+    Object.keys(loggedInUser).forEach((key) => {
+      if (allowedFields.includes(key)) {
+        updatedUserData[key] = loggedInUser[key];
+      }
+    });
+    res.send(updatedUserData);
   } catch (err) {
     res.status(500).send("Error fetching profile: " + err.message);
   }
@@ -31,6 +48,8 @@ profileRouter.patch("/edit", userAuth, async (req, res) => {
       gender: loggedInUser.gender,
       skills: loggedInUser.skills,
       country: loggedInUser.country,
+      photoUrl: loggedInUser.photoUrl,
+      about: loggedInUser.about,
     };
     res.json({
       message: `${loggedInUser.firstName} Your profile updated successfully`,
@@ -67,6 +86,5 @@ profileRouter.patch("/password", userAuth, async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
 
 module.exports = profileRouter;

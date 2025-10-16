@@ -36,11 +36,11 @@ authRouter.post("/login", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("Invalid email or password");
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      throw new Error("Invalid email or password");
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     console.log("User found:", user);
     const token = user.getJWT(user);

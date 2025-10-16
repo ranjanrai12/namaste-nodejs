@@ -39,6 +39,8 @@ const validationProfileUpdateData = (req) => {
     "gender",
     "skills",
     "country",
+    "photoUrl",
+    "about",
   ];
   const { firstName, skills } = req.body;
   if (!validator.isLength(firstName, { min: 3 })) {
