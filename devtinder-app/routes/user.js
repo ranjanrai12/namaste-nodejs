@@ -53,7 +53,7 @@ userRouter.get("/connections", userAuth, async (req, res) => {
 
     const connections = connectionRequests.map((request) => {
       // If the request is from the current user, return the other user
-      if (request.fromUserId.toString() === request.toUserId.toString()) {
+      if (request.fromUserId._id.toString() === loggedInUser._id.toString()) {
         return request.toUserId;
       }
       // Otherwise, return the sender
