@@ -57,6 +57,7 @@ profileRouter.patch(
         const uploadPath = path.join(__dirname, "..", "uploads", fileName);
 
         // Save file only if it doesn't exist
+        // TODO: Later store in S3 instead of local 
         if (!fs.existsSync(uploadPath)) {
           fs.writeFileSync(uploadPath, req.file.buffer);
         }
