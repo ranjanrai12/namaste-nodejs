@@ -46,7 +46,7 @@ const validationProfileUpdateData = (req) => {
   if (!validator.isLength(firstName, { min: 3 })) {
     throw new Error("FirstName should be more than or equal to 3 characters");
   }
-  if (!skills.length > 30) {
+  if (skills && !skills.length > 30) {
     throw new Error("Skills should not be more than 30");
   }
 
