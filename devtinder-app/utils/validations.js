@@ -1,7 +1,7 @@
 const validator = require("validator");
 
 const validateSignUpData = (req) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, age } = req.body;
   if (!firstName || firstName.length < 3 || firstName.length > 50) {
     throw new Error("First name must be between 3 and 50 characters long.");
   }
@@ -10,6 +10,9 @@ const validateSignUpData = (req) => {
   }
   if (!validator.isEmail(email)) {
     throw new Error("Invalid email format.");
+  }
+  if (age < 18 || age > 100) {
+    throw new Error("Age should be between 18 and 100");
   }
   if (!validator.isStrongPassword(password)) {
     throw new Error(

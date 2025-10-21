@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
+      required: true,
       validate: {
         validator: function (v) {
           return v >= 18 && v <= 100;

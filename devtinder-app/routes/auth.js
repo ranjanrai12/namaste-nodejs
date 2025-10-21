@@ -11,7 +11,7 @@ const {
 
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, age } = req.body;
     validateSignUpData(req);
     // check for existing user
     const existingUser = await User.findOne({ email });
@@ -24,6 +24,7 @@ authRouter.post("/signup", async (req, res) => {
       lastName,
       email,
       password: bcryptPassword,
+      age
     });
     const savedUser = await user.save();
     const token = savedUser.getJWT();
