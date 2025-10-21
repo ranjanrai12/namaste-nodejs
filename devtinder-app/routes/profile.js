@@ -1,6 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const profileRouter = express.Router();
+const fs = require("fs");
+const path = require("path");
+const { upload } = require("../middlewares/multer");
+const crypto = require("crypto");
 
 const { userAuth } = require("../middlewares/auth");
 const { validationProfileUpdateData } = require("../utils/validations");
@@ -30,35 +34,76 @@ profileRouter.get("/view", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.patch("/edit", userAuth, async (req, res) => {
-  try {
-    if (!validationProfileUpdateData(req)) {
-      throw new Error("Update not allowed");
-    }
-    const loggedInUser = req.user;
+profileRouter.patch(
+  "/edit",
+  userAuth,
+  upload.single("photoUrl"),
+  async (req, res) => {
+    try {
+      if (!validationProfileUpdateData(req)) {
+        throw new Error("Update not allowed");
+      }
+      const loggedInUser = req.user;
 
-    Object.keys(req.body).forEach((key) => {
-      loggedInUser[key] = req.body[key];
-    });
-    await loggedInUser.save();
-    const updatedUserData = {
-      firstName: loggedInUser.firstName,
-      lastName: loggedInUser.lastName,
-      age: loggedInUser.age,
-      gender: loggedInUser.gender,
-      skills: loggedInUser.skills,
-      country: loggedInUser.country,
-      photoUrl: loggedInUser.photoUrl,
-      about: loggedInUser.about,
-    };
-    res.json({
-      message: `${loggedInUser.firstName} Your profile updated successfully`,
-      data: updatedUserData,
-    });
-  } catch (err) {
-    res.status(500).send("Error while updating profile: " + err.message);
+      // Handle uploaded photo
+      if (req.file) {
+        // Calculate file hash
+        const hash = crypto
+          .createHash("md5")
+          .update(req.file.buffer)
+          .digest("hex");
+        const ext = path.extname(req.file.originalname);
+        const fileName = `photo-${hash}${ext}`;
+        const uploadPath = path.join(__dirname, "..", "uploads", fileName);
+
+        // Save file only if it doesn't exist
+        if (!fs.existsSync(uploadPath)) {
+          fs.writeFileSync(uploadPath, req.file.buffer);
+        }
+
+        // Delete previous image if exists and not same as new one
+        if (
+          loggedInUser.photoUrl &&
+          loggedInUser.photoUrl !== `/uploads/${fileName}`
+        ) {
+          const oldImagePath = path.join(
+            __dirname,
+            "..",
+            loggedInUser.photoUrl
+          );
+          fs.unlink(oldImagePath, (err) => {
+            if (err) console.error("Failed to delete old image:", err);
+          });
+        }
+
+        loggedInUser.photoUrl = `/uploads/${fileName}`;
+      }
+
+      Object.keys(req.body).forEach((key) => {
+        if (req.body[key] !== undefined) {
+          loggedInUser[key] = req.body[key];
+        }
+      });
+      await loggedInUser.save();
+      const updatedUserData = {
+        firstName: loggedInUser.firstName,
+        lastName: loggedInUser.lastName,
+        age: loggedInUser.age,
+        gender: loggedInUser.gender,
+        skills: loggedInUser.skills,
+        country: loggedInUser.country,
+        photoUrl: loggedInUser.photoUrl,
+        about: loggedInUser.about,
+      };
+      res.json({
+        message: `${loggedInUser.firstName} Your profile updated successfully`,
+        data: updatedUserData,
+      });
+    } catch (err) {
+      res.status(500).send("Error while updating profile: " + err.message);
+    }
   }
-});
+);
 
 profileRouter.patch("/password", userAuth, async (req, res) => {
   try {

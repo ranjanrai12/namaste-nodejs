@@ -16,7 +16,9 @@ authRouter.post("/signup", async (req, res) => {
     // check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(500).json({ message: "User already exists, please use a different email" });
+      return res
+        .status(500)
+        .json({ message: "User already exists, please use a different email" });
     }
     const bcryptPassword = await bcrypt.hash(password, 10);
     const user = new User({
@@ -24,7 +26,7 @@ authRouter.post("/signup", async (req, res) => {
       lastName,
       email,
       password: bcryptPassword,
-      age
+      age,
     });
     const savedUser = await user.save();
     const token = savedUser.getJWT();
@@ -62,7 +64,17 @@ authRouter.post("/login", async (req, res) => {
       sameSite: "strict",
       expires: new Date(Date.now() + 3600000),
     });
-    const allowedFields = ["_id", "firstName", "lastName", "email", "age"];
+    const allowedFields = [
+      "_id",
+      "firstName",
+      "lastName",
+      "email",
+      "age",
+      "photoUrl",
+      "skills",
+      "gender",
+      "about",
+    ];
     const filteredUser = {};
     const userObject = user.toObject();
     Object.keys(userObject).forEach((key) => {
