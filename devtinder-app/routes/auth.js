@@ -13,17 +13,28 @@ authRouter.post("/signup", async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
     validateSignUpData(req);
+    // check for existing user
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(500).json({ message: "User already exists, please use a different email" });
+    }
     const bcryptPassword = await bcrypt.hash(password, 10);
-    console.log("Hashed Password:", bcryptPassword);
     const user = new User({
       firstName,
       lastName,
       email,
       password: bcryptPassword,
     });
-    await user.save();
-    // Validate the signup data before saving
-    res.send("User created successfully");
+    const savedUser = await user.save();
+    const token = savedUser.getJWT();
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      expires: new Date(Date.now() + 3600000),
+    });
+    res.json({ message: "User created successfully", data: savedUser });
   } catch (error) {
     res.status(400).send("Error creating user: " + error.message);
   }
