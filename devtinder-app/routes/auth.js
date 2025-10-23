@@ -61,7 +61,7 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
-      sameSite: "strict",
+      sameSite: "lax", // allow cross site requests like from localhost
       expires: new Date(Date.now() + 3600000),
     });
     const allowedFields = [
