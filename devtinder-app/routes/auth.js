@@ -62,6 +62,7 @@ authRouter.post("/login", async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: "lax", // allow cross site requests like from localhost
+      path: "/",
       expires: new Date(Date.now() + 3600000),
     });
     const allowedFields = [
