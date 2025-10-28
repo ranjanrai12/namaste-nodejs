@@ -4,6 +4,8 @@ const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
+const sendEmail = require("../utils/sendEmail");
+
 requestRouter.get("/user", async (req, res) => {
   //   try {
   // find will return an array of documents
@@ -114,7 +116,6 @@ requestRouter.patch("/user/update/:id", async (req, res) => {
  * @body { status: "ignored" | "interested" }
  */
 requestRouter.post("/send/:status/:toUserId", userAuth, async (req, res) => {
-  console.log(req);
   try {
     const { _id: fromUserId } = req.user;
     const toUserId = req.params.toUserId;
@@ -166,6 +167,10 @@ requestRouter.post("/send/:status/:toUserId", userAuth, async (req, res) => {
       status,
     });
     const data = await connectionRequest.save();
+    
+    // Send email
+    const emailRes = await sendEmail.run();
+
     res.status(200).json({
       status: `${req.user.firstName} is ${status} in ${toUser.firstName}`,
       data,
