@@ -5,6 +5,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
+require("./utils/cronJob")
 
 
 // Middlewares
