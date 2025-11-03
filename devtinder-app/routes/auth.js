@@ -56,7 +56,6 @@ authRouter.post("/login", async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    console.log("User found:", user);
     const token = user.getJWT(user);
     res.cookie("token", token, {
       httpOnly: true,

@@ -1,12 +1,12 @@
-require("dotenv").config()
+require("dotenv").config();
 const express = require("express");
+const http = require("http");
 const mongooseDB = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
-require("./utils/cronJob")
-
+require("./utils/cronJob");
 
 // Middlewares
 app.use(express.json()); // Middleware to parse JSON request bodies
@@ -24,6 +24,7 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const initializeSocket = require("./utils/socket");
 
 app.use("/auth", authRouter);
 
@@ -33,10 +34,13 @@ app.use("/request", requestRouter);
 
 app.use("/user", userRouter);
 
+const server = http.createServer(app);
+initializeSocket(server);
+
 mongooseDB()
   .then((res) => {
     console.log("Database connected successfully");
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log("Application is running on 3000");
     });
   })

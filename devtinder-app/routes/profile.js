@@ -9,6 +9,7 @@ const crypto = require("crypto");
 const { userAuth } = require("../middlewares/auth");
 const { validationProfileUpdateData } = require("../utils/validations");
 const allowedFields = [
+  "_id",
   "firstName",
   "lastName",
   "photoUrl",
