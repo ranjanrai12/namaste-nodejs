@@ -1,5 +1,6 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
+const Chat = require("../models/chat");
 
 const createSecureRoomId = (userId1, userId2) => {
   const sortIds = [userId1, userId2].sort();
@@ -25,16 +26,39 @@ const initializeSocket = (server) => {
       console.log(firstName + " joining the room", roomId);
       socket.join(roomId);
     });
-    socket.on("sendMessage", ({ firstName, message, fromUserId, toUserId }) => {
-      const roomId = createSecureRoomId(fromUserId, toUserId);
-      console.log(firstName + " sending a message", message);
-      io.to(roomId).emit("messageReceived", {
-        firstName,
-        message,
-        senderId: fromUserId,
-        createdAt: new Date(),
-      });
-    });
+
+    socket.on(
+      "sendMessage",
+      async ({ firstName, message, fromUserId, toUserId }) => {
+        try {
+          const roomId = createSecureRoomId(fromUserId, toUserId);
+          let chat = await Chat.findOne({
+            participants: { $all: [fromUserId, toUserId] },
+          });
+          if (!chat) {
+            // create if doesn't exists
+            chat = new Chat({
+              participants: [fromUserId, toUserId],
+              message: [],
+            });
+          }
+          chat.messages.push({ senderId: fromUserId, message });
+
+          await chat.save();
+
+          io.to(roomId).emit("messageReceived", {
+            firstName,
+            message,
+            senderId: fromUserId,
+            createdAt: new Date(),
+          });
+        } catch (err) {
+          console.error("Error saving chat/message:", err);
+          socket.emit("error", { message: "Failed to save message" });
+        }
+      }
+    );
+
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });
