@@ -9,7 +9,6 @@ const path = require("path");
 require("./utils/cronJob");
 const initializeSocket = require("./utils/socket");
 
-
 // Middlewares
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(cookieParser()); // Middleware to parse cookies
@@ -26,7 +25,6 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
-const chatRouter = require("./routes/chat");
 
 app.use("/auth", authRouter);
 
@@ -35,8 +33,6 @@ app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
 
 app.use("/user", userRouter);
-
-app.use("/chat", chatRouter)
 
 const server = http.createServer(app);
 initializeSocket(server);

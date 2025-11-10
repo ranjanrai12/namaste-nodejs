@@ -10,6 +10,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 
 // Middlewares
 const { userAuth } = require("../middlewares/auth");
+const Chat = require("../models/chat");
 
 // Constants
 const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
@@ -25,7 +26,10 @@ userRouter.get("/request/received", userAuth, async (req, res) => {
     const connectionRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested",
-    }).populate("fromUserId", "firstName lastName country photoUrl about age skills");
+    }).populate(
+      "fromUserId",
+      "firstName lastName country photoUrl about age skills"
+    );
 
     res.status(200).json({ data: connectionRequests });
   } catch (err) {
@@ -125,6 +129,40 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     res.json({ data: users });
   } catch (err) {
     res.status(500).send("Error fetching feed: " + err.message);
+  }
+});
+/**
+ * @route GET /chat/:toUserId
+ * @description Get user by id
+ */
+userRouter.get("/chat/:toUserId", userAuth, async (req, res) => {
+  const toUserId = req.params.toUserId;
+  const fromUserId = req.user._id;
+
+  let chat = await Chat.findOne({
+    participants: { $all: [fromUserId, toUserId] },
+  }).populate({
+    path: "messages.senderId",
+    select: "firstName lastName message",
+  });
+  if (!chat) {
+    chat = new Chat({
+      participants: [fromUserId, toUserId],
+      messages: [],
+    });
+    await chat.save();
+  }
+  res.json(chat);
+});
+
+userRouter.get("/chat/last-seen/:toUserId", userAuth, async (req, res) => {
+  try {
+    const toUserId = req.params.toUserId;
+
+    const user = await User.findById(toUserId).select("lastSeen");
+    res.json({data: user});
+  } catch (err) {
+    res.status(500).send("Error fetching last seen: " + err.message);
   }
 });
 
