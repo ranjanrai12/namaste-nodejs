@@ -143,7 +143,7 @@ userRouter.get("/chat/:toUserId", userAuth, async (req, res) => {
     participants: { $all: [fromUserId, toUserId] },
   }).populate({
     path: "messages.senderId",
-    select: "firstName lastName message",
+    select: "firstName lastName message photoUrl",
   });
   if (!chat) {
     chat = new Chat({
