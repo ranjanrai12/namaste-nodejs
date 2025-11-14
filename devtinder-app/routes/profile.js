@@ -133,7 +133,6 @@ profileRouter.patch(
       // Upload new file
       if (req.file) {
         const newUrl = await uploadToS3(req.file, "profile-photos");
-        console.log("newUrl", newUrl);
 
         // Delete old image if exists and stored in S3
         if (loggedInUser.photoUrl?.includes("amazonaws.com")) {
@@ -149,8 +148,13 @@ profileRouter.patch(
         loggedInUser.photoUrl = newUrl;
       }
 
-      // Update other fields
-      Object.assign(loggedInUser, req.body);
+      // Update the fields
+      console.log("Edit Profile", req.body)
+      Object.keys(req.body).forEach((key) => {
+        if (req.body[key] !== undefined && req.body[key] !== "undefined") {
+          loggedInUser[key] = req.body[key];
+        }
+      });
       await loggedInUser.save();
 
       res.json({
