@@ -140,7 +140,6 @@ userRouter.get("/chat/:toUserId", userAuth, async (req, res) => {
     const toUserId = req.params.toUserId;
     const fromUserId = req.user._id;
     const toUserDetails = await User.findOne({_id: toUserId}).select(USER_SAFE_DATA);
-    console.log('toUserDetails', toUserDetails);
     let chat = await Chat.findOne({
       participants: { $all: [fromUserId, toUserId] },
     }).populate({
@@ -157,7 +156,6 @@ userRouter.get("/chat/:toUserId", userAuth, async (req, res) => {
     }
     res.json({data: chat, toUserDetails});
   } catch (err) {
-    console.log(err);
     res.status(500).send("Error fetching chat: " + err.message);
   }
 });
