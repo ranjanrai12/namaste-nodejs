@@ -5,7 +5,10 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
 const sendEmail = require("../utils/sendEmail");
-
+/**
+ * @route GET /user
+ * @description Get user by email
+ */
 requestRouter.get("/user", async (req, res) => {
   //   try {
   // find will return an array of documents
@@ -30,6 +33,10 @@ requestRouter.get("/user", async (req, res) => {
   }
 });
 
+/**
+ * @route GET /user/:id
+ * @description Get user by id
+ */
 requestRouter.get("/user/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -41,7 +48,10 @@ requestRouter.get("/user/:id", async (req, res) => {
     res.send("Error fetching user by ID: " + err.message);
   }
 });
-
+/**
+ * @route GET /feed
+ * @description Get all users
+ */
 requestRouter.get("/feed", async (req, res) => {
   try {
     const allUsers = await User.find({});
@@ -54,7 +64,10 @@ requestRouter.get("/feed", async (req, res) => {
     res.status(500).send("Error fetching feed: " + error.message);
   }
 });
-
+/**
+ * @route DELETE /user/delete
+ * @description Delete user by id
+ */
 requestRouter.delete("/user/delete", async (req, res) => {
   try {
     const userId = req.body.id;
@@ -69,7 +82,10 @@ requestRouter.delete("/user/delete", async (req, res) => {
     res.status(500).send("Error deleting user by ID:" + err.message);
   }
 });
-
+/**
+ * @route PATCH /user/update/:id
+ * @description Update user by id
+ */
 requestRouter.patch("/user/update/:id", async (req, res) => {
   try {
     // Using findByIdAndUpdate to update the user by ID

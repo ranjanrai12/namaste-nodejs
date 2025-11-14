@@ -23,6 +23,10 @@ const allowedFields = [
   "email",
 ];
 
+/**
+ * @route GET /profile/view
+ * @description Get user profile
+ */
 profileRouter.get("/view", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user.toObject();
@@ -113,6 +117,11 @@ profileRouter.get("/view", userAuth, async (req, res) => {
 //   }
 // );
 
+/**
+ * @route PATCH /profile/edit
+ * Edit user profile in this method we have used the AWS S3 bucket for images
+ */
+
 profileRouter.patch(
   "/edit",
   userAuth,
@@ -154,7 +163,10 @@ profileRouter.patch(
     }
   }
 );
-
+/**
+ * @route PATCH /profile/password
+ * @description Update user password
+ */
 profileRouter.patch("/password", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;

@@ -9,6 +9,10 @@ const {
   validateLoginData,
 } = require("../utils/validations");
 
+/**
+ * @route POST /auth/signup
+ * @description Create a new user
+ */
 authRouter.post("/signup", async (req, res) => {
   try {
     const { firstName, lastName, email, password, age } = req.body;
@@ -42,7 +46,10 @@ authRouter.post("/signup", async (req, res) => {
     res.status(400).send("Error creating user: " + error.message);
   }
 });
-
+/**
+ * @route POST /auth/login
+ * @description Login user
+ */
 authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -87,7 +94,10 @@ authRouter.post("/login", async (req, res) => {
     res.status(500).json(err.message);
   }
 });
-
+/**
+ * @route POST /auth/logout
+ * @description Logout user
+ */
 authRouter.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
