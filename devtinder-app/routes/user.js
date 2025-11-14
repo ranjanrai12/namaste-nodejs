@@ -139,22 +139,24 @@ userRouter.get("/chat/:toUserId", userAuth, async (req, res) => {
   try {
     const toUserId = req.params.toUserId;
     const fromUserId = req.user._id;
-    const toUserDetails = await User.findOne({_id: toUserId}).select(USER_SAFE_DATA);
+    const toUserDetails = await User.findOne({ _id: toUserId }).select(
+      USER_SAFE_DATA
+    );
     let chat = await Chat.findOne({
       participants: { $all: [fromUserId, toUserId] },
     }).populate({
       path: "messages.senderId",
       select: "firstName lastName message photoUrl",
     });
-  
+
     if (!chat) {
       chat = new Chat({
         participants: [fromUserId, toUserId],
-        messages: []
+        messages: [],
       });
       await chat.save();
     }
-    res.json({data: chat, toUserDetails});
+    res.json({ data: chat, toUserDetails });
   } catch (err) {
     res.status(500).send("Error fetching chat: " + err.message);
   }
