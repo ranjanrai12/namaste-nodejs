@@ -14,8 +14,8 @@ A database is an `organized (or structured)` collection of data.
 
 `Database Management System (DBMS):`
 
-- A software layer that interacts with End users, Applications, The database itself.
-- It manages data operations (insert, update, delete, query).
+ A database management system (**DBMS**) is a software system for creating and managing databases. A DBMS enables end users to create, protect, read, update and delete data in a database.
+
 - Example: MySQL, MongoDB, PostgreSQL.
 
 ## Types of Databases
