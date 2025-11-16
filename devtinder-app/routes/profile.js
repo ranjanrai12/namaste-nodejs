@@ -149,7 +149,6 @@ profileRouter.patch(
       }
 
       // Update the fields
-      console.log("Edit Profile", req.body)
       Object.keys(req.body).forEach((key) => {
         if (req.body[key] !== undefined && req.body[key] !== "undefined") {
           loggedInUser[key] = req.body[key];
