@@ -110,15 +110,19 @@ Additionally, some databases are `multi-model`, meaning they combine multiple No
 
 ## RDBMS vs. NoSQL (MongoDB)
 
-| **RDBMS(e.g., MySQL)**                         | **NoSQL (MongoDB)**                                           |
-| ---------------------------------------------- | ------------------------------------------------------------- |
-| Tables (Rows & Columns)                        | Collections (Documents & Fields)                              |
-| Structured Data                                | Unstructured Data                                             |
-| Fixed (Predefined)                             | Flexible (Dynamic)                                            |
-| SQL (Structured Query Language)                | MongoDB Query Language (MQL) / Other NoSQL-specific languages |
-| Joins & Relations -> Uses Foreign Keys & Joins | No Joins (Nested documents instead)                           |
-| Read-heavy apps, transaction workloads         | Real-time apps, Big Data, distributed computing               |
-| Ex: Banking apps                               | Ex: Real time analysis, social media                          |
+# SQL vs NoSQL Comparison
+
+| **Aspect**        | **SQL (Relational)**                                 | **NoSQL (Non-relational)**                                                  |
+|-------------------|-------------------------------------------------------|------------------------------------------------------------------------------|
+| **Data Structure** | Tables with rows and columns                          | Document-based(mongoDB), key-value(Redish), column-family, or graph-based(neo4j)                    |
+| **Schema**         | Fixed schema (predefined structure)                   | Flexible schema (dynamic and adaptable)                                      |
+| **Scalability**    | Vertically scalable (upgrading hardware)              | Horizontally scalable (adding more servers)                                  |
+| **Data Integrity** | ACID-compliant (strong consistency)                   | BASE-compliant (more available, less consistent)                             |
+| **Query Language** | SQL (Structured Query Language)                       | Varies (e.g., MongoDB uses its own query language)                           |
+| **Performance**    | Efficient for complex queries and transactions        | Better for large-scale data and fast read/write operations                   |
+| **Use Case**       | Best for transactional systems (banking, ERP, etc.)  | Ideal for big data, real-time web apps, and data lakes                        |
+| **Examples**       | MySQL, PostgreSQL, Oracle, MS SQL Server              | MongoDB, Cassandra, CouchDB, Neo4j                                           |
+
 
 ## How Data is Stored?
 
