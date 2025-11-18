@@ -66,8 +66,8 @@ authRouter.post("/login", async (req, res) => {
     const token = user.getJWT(user);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax", // allow cross site requests like from localhost
+      secure: true,
+      sameSite: "strict",
       path: "/",
       expires: new Date(Date.now() + 3600000),
     });
