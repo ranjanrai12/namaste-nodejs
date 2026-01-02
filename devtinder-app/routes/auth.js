@@ -13,16 +13,23 @@ const {
  * @route POST /auth/signup
  * @description Create a new user
  */
-authRouter.post("/signup", async (req, res) => {
-  try {
+const asyncHandler = require("../utils/asyncHandler");
+
+/**
+ * @route POST /auth/signup
+ * @description Create a new user
+ */
+authRouter.post(
+  "/signup",
+  asyncHandler(async (req, res) => {
     const { firstName, lastName, email, password, age } = req.body;
     validateSignUpData(req);
     // check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(500)
-        .json({ message: "User already exists, please use a different email" });
+      const err = new Error("User already exists, please use a different email");
+      err.statusCode = 400;
+      throw err;
     }
     const bcryptPassword = await bcrypt.hash(password, 10);
     const user = new User({
@@ -42,26 +49,29 @@ authRouter.post("/signup", async (req, res) => {
       expires: new Date(Date.now() + 3600000),
     });
     res.json({ message: "User created successfully", data: savedUser });
-  } catch (error) {
-    res.status(400).send("Error creating user: " + error.message);
-  }
-});
+  })
+);
 /**
  * @route POST /auth/login
  * @description Login user
  */
-authRouter.post("/login", async (req, res) => {
-  try {
+authRouter.post(
+  "/login",
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     validateLoginData(req);
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
     }
     const token = user.getJWT(user);
     res.cookie("token", token, {
@@ -90,10 +100,8 @@ authRouter.post("/login", async (req, res) => {
       }
     });
     res.json({ data: filteredUser });
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-});
+  })
+);
 /**
  * @route POST /auth/logout
  * @description Logout user

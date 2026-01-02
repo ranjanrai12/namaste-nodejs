@@ -47,3 +47,7 @@ mongooseDB()
   .catch((error) => {
     console.error("Database connection failed:", error);
   });
+
+const errorHandler = require("./middlewares/errorHandler");
+app.use(errorHandler);
+

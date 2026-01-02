@@ -1,6 +1,10 @@
 {
     "type": "commonjs",
+    "scripts": {
+        "start": "nodemon app.js"
+    },
     "dependencies": {
+        "express": "^5.1.0",
         "mongodb": "^6.17.0"
     }
 }

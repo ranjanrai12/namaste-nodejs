@@ -3,13 +3,17 @@
 // const { sum, multiply } = require('./calculate')
 // sum(2,3)
 // multiply(2, 4)
-const https = require('https');
-const fs = require('fs');
-const crypto = require('node:crypto');
+const https = require("https");
+const fs = require("fs");
+const crypto = require("node:crypto");
+const cluster = require("cluster");
+const os = require("os");
+const express = require("express");
+const app = express();
 
 // console.log('Hello World')
 
-var a  = 234234;
+var a = 234234;
 var b = 293847;
 
 // fs.readFileSync('./file.txt', 'utf8');
@@ -46,7 +50,7 @@ var b = 293847;
 // var c = multiply(12,5);
 // console.log("Multiplication result is:",  c);
 
-// This callback only pushed to call stack in v8 once callstack is empty 
+// This callback only pushed to call stack in v8 once callstack is empty
 // setTimeout(() => {
 //     console.log("call me asap")
 // }, 0); // trust issue with setTimeout
@@ -67,7 +71,7 @@ var b = 293847;
 // setTimeout(() => console.log('Timer expired'), 0);
 
 // Promise.resolve('Promise').then((res) => {
-//     process.nextTick(() => { 
+//     process.nextTick(() => {
 //         console.log('nextTick 3')
 //     })
 //     console.log(res)
@@ -75,13 +79,13 @@ var b = 293847;
 
 // fs.readFile('./file.txt', 'utf8', () => {
 //     console.log('File reading CB')
-//     process.nextTick(() => { 
+//     process.nextTick(() => {
 //         console.log('nextTick 4')
 //     })
 // })
 // process.nextTick(() => {
 //     process.nextTick(() => {
-//         process.nextTick(() => { 
+//         process.nextTick(() => {
 //             console.log('nextTick 2')
 //         })
 //     });
@@ -100,19 +104,58 @@ var b = 293847;
  * File reading CB
  * nextTick 4
  */
-process.env.UV_THREADPOOL_SIZE = 8
-crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
-    console.log("1: crypto.pdkdf2 done")
-})
-crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
-    console.log("2: crypto.pdkdf2 done")
-})
-crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
-    console.log("3: crypto.pdkdf2 done")
-})
-crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
-    console.log("4: crypto.pdkdf2 done")
-})
-crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
-    console.log("5: crypto.pdkdf2 done")
-})
+/**
+ * Crypto methods
+ */
+// process.env.UV_THREADPOOL_SIZE = 8
+// crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
+//     console.log("1: crypto.pdkdf2 done")
+// })
+// crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
+//     console.log("2: crypto.pdkdf2 done")
+// })
+// crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
+//     console.log("3: crypto.pdkdf2 done")
+// })
+// crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
+//     console.log("4: crypto.pdkdf2 done")
+// })
+// crypto.pbkdf2("Password", "salt", 5000000, 50, "sha512", (err, key) => {
+//     console.log("5: crypto.pdkdf2 done")
+// })
+
+/**
+ * File Sysytem operation
+ */
+// const data  = fs.appendFile("./file.txt", `*******${new Date()}******\nThis is dummy text\n`, (err, data) => {
+//     console.log(data)
+// })
+// console.log(data)
+
+/**
+ * Cluster
+ */
+if (cluster.isPrimary) {
+  const numsOfCpus = os.cpus().length;
+  // const numOfCpus = os.availableParallelism;
+  console.log(`Primary process is running ${process.pid}`);
+  console.log(`Number of cpus ${numsOfCpus}`);
+  // fork worker
+  for (let i = 0; i < numsOfCpus; i++) {
+    cluster.fork();
+  }
+  cluster.on("exit", (worker) => {
+    console.log("Worker " + worker.process.pid + "is died now restarting");
+    cluster.fork();
+  });
+} else {
+  app.use("/", (req, res) => {
+    res.json({ data: `Hello from express ${process.pid}` });
+  });
+  app.use("/demo", (req, res) => {
+    res.json({ data: `Hello from demo api${process.pid}` });
+  });
+  app.listen(3000, () => {
+    console.log("Server Started on port 3000");
+  });
+}
