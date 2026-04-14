@@ -6,8 +6,6 @@
 
 - There is an `event-loop` inside the `libuv` which role is to keep checking `callstack` is empty or not, if it finds out the `callstack` is empty then it pass the callback to the callstack.
 
-#### Event-loop: To be continue
-
 ![alt text](/assets/season1/image-6.png)
 
 There are multiple phases inside the event loop but there are 4 major phases.

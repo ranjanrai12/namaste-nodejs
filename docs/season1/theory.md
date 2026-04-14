@@ -68,7 +68,7 @@ In terminal just write node and hit enter it will open node REPL, where we can r
 - To exports: we use `module.exports`
 - To import: we use `require`
 - By default used in `nodejs`
-- older way
+- older way.
 - It works with synchronous
 - It runs in `non-strict` mode.
 
@@ -525,4 +525,3 @@ Note: this kind of optimization is handled automatically by V8, and most of the 
 Above architecture taken the reference from V8 engine for other js Engine it can be different, but in nut shell each engine use the same thing like they use interpreter, compiler and so on..
 
 For more details about V8 engine Read this documentation(https://v8.dev/blog).
-

@@ -4,6 +4,8 @@
         "kqueue",
         "libuv",
         "MERN",
+        "microtask",
+        "microtasks",
         "THREADPOOL"
     ]
 }

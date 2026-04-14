@@ -50,4 +50,3 @@ mongooseDB()
 
 const errorHandler = require("./middlewares/errorHandler");
 app.use(errorHandler);
-
