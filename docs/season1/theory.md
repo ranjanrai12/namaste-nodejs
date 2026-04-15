@@ -214,7 +214,7 @@ In the above code whatever code is there in xyz file that is wraps into a functi
 - I/O means input output like api call, reading the file requesting the file.
   ![alt text](/assets/season1/libuv-diagram.jpeg)
 
-#### Sync, async, setTimeoutZero
+#### Episode-07 | sync, async, setTimeoutZero - code
 
 - Read about utf8
 
@@ -331,7 +331,7 @@ call me after 3 sec
 */
 ```
 
-#### Deep dive into v8 JS Engine
+#### Episode-08 | Deep dive into v8 JS Engine
 
 Q: What are the steps runs when we give the code to the V8 engine.
 
