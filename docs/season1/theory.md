@@ -134,7 +134,7 @@ Note: We don't need to write the index in path `./calculate/index`,
 `Default entry point:`
 When you import from a directory without specifying a file, the system looks for an "index.js" file within that directory as the default entry point.
 
-Episode 5- Diving into nodejs github repo
+#### Episode 5- Diving into nodejs github repo
 
 - When we create a module that all code is wrapped inside the function and it's private to the scope we cannot access it outside, only to access it outside via module.exports.
 
