@@ -77,6 +77,7 @@ app.get(
 // Output
 /**
  * This is the first middleware function
+ * This will be executed after the response is sent
  * Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client at ServerResponse.setHeader ..
 **/
 **`Notes`**: It throws an Error because server already responded to the client in the 1st handler
